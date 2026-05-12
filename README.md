@@ -12,24 +12,71 @@ It has a fixed block size of 128 bits, and a key size of 128, 192, or 256 bits.
 AES operates on a 4 × 4 column-major order array of bytes, termed the state
 # PROGRAM:
 ```
-#include <stdio.h> 
-#include <string.h> 
-void xorCrypt(char *in, char *key) { 
-for (int i = 0; in[i]; i++) in[i] ^= key[i % strlen(key)]; 
-} 
-int main() { 
-char msg[] = "MIDHUN SANKAR", key[] = "secretkey"; 
-printf("Original: %s\n", msg); 
-xorCrypt(msg, key); 
-printf("Encrypted: %s\n", msg); 
-xorCrypt(msg, key); 
-printf("Decrypted: %s\n", msg); 
-return 0; 
-} 
+#include <stdio.h>
+#include <string.h>
+
+void simpleAESEncrypt(char *plaintext, char *key, char *ciphertext) {
+    int i;
+    int plen = strlen(plaintext);
+    int klen = strlen(key);
+
+    for (i = 0; i < plen; i++) {
+        ciphertext[i] = plaintext[i] ^ key[i % klen];
+    }
+    ciphertext[i] = '\0';
+}
+
+void simpleAESDecrypt(char *ciphertext, char *key, char *decryptedText) {
+    int i;
+    int clen = strlen(ciphertext);
+    int klen = strlen(key);
+
+    for (i = 0; i < clen; i++) {
+        decryptedText[i] = ciphertext[i] ^ key[i % klen];
+    }
+    decryptedText[i] = '\0';
+}
+
+void printASCII(char *ciphertext) {
+    printf("Encrypted Message (ASCII values): ");
+    int clen = strlen(ciphertext);
+    for (int i = 0; i < clen; i++) {
+        printf("%d ", (unsigned char)ciphertext[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    char plaintext[100], key[100], ciphertext[100], decryptedText[100];
+
+    printf("Enter the plaintext: ");
+    fgets(plaintext, sizeof(plaintext), stdin);
+    plaintext[strcspn(plaintext, "\n")] = '\0'; // remove newline
+
+    printf("Enter the key: ");
+    fgets(key, sizeof(key), stdin);
+    key[strcspn(key, "\n")] = '\0'; // remove newline
+
+    if (strlen(key) == 0) {
+        printf("Error: Key cannot be empty!\n");
+        return 1;
+    }
+
+    simpleAESEncrypt(plaintext, key, ciphertext);
+    printASCII(ciphertext);
+
+    simpleAESDecrypt(ciphertext, key, decryptedText);
+    printf("Decrypted Message: %s\n", decryptedText);
+
+    return 0;
+}
+
+
 
 ```
 # OUTPUT:
-<img width="663" height="366" alt="image" src="https://github.com/user-attachments/assets/3a143ef0-1e6a-44f5-8939-0f750cfb255f" />
+<img width="472" height="280" alt="image" src="https://github.com/user-attachments/assets/6deef194-88d5-4214-888d-16acc074fe11" />
+
 
 
 # RESULT:
